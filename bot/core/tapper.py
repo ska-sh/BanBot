@@ -249,10 +249,10 @@ class Tapper:
                 today_click_count = data['today_click_count']
                 if data is not None:
                     if max_click_count > today_click_count:
-                        logger.info(f"peels:{data['peel']}, max_click_count:{data['max_click_count']}, "
-                                    f"today_click_count:{data['today_click_count']}")
+                        self.info(f"peels:{data['peel']}, max_click_count:{data['max_click_count']},"
+                                  f" today_click_count:{data['today_click_count']}")
                         await self.do_click(http_client=http_client)
-                        await asyncio.sleep(1)
+                        await asyncio.sleep(random.randint(1, 5))
                     else:
                         logger.success(f"Click Already completed")
             return True
@@ -261,7 +261,8 @@ class Tapper:
 
     async def do_click(self, http_client: aiohttp.ClientSession):
         try:
-            json_data = {'clickCount': 1}
+            click_count = random.randint(settings.CLICK_COUNT[0], settings.CLICK_COUNT[1])
+            json_data = {'clickCount': click_count}
             resp = await http_client.post("https://interface.carv.io/banana/do_click", json=json_data, ssl=False)
             resp_json = await resp.json()
             data = resp_json.get('data')
@@ -287,10 +288,10 @@ class Tapper:
                         if quest['quest_name'] not in settings.BLACKLIST_TASK:
                             if await self.achieve_quest(http_client=http_client, quest_id=quest['quest_id']):
                                 self.success(f"achieve: {quest['quest_name']}")
-                                await asyncio.sleep(1)
+                                await asyncio.sleep(random.randint(5, 15))
                             else:
                                 self.warning(f"achieve failed: {quest['quest_name']}")
-                                await asyncio.sleep(1)
+                                await asyncio.sleep(random.randint(5, 15))
         except Exception as e:
             self.error(f"get_quest_list error: {e}")
 
@@ -389,10 +390,10 @@ class Tapper:
 async def run_tapper(tg_client: Client, proxy: str | None):
     try:
         # 在创建Tapper实例之前添加随机休眠
-        # if settings.SLEEP_BETWEEN_START:
-        #     sleep_time = random.randint(settings.SLEEP_BETWEEN_START[0], settings.SLEEP_BETWEEN_START[1])
-        #     logger.info(f"{tg_client.name} | Sleep for {sleep_time} seconds before starting session...")
-        #     await asyncio.sleep(sleep_time)
+        if settings.SLEEP_BETWEEN_START:
+            sleep_time = random.randint(settings.SLEEP_BETWEEN_START[0], settings.SLEEP_BETWEEN_START[1])
+            logger.info(f"{tg_client.name} | Sleep for {sleep_time} seconds before starting session...")
+            await asyncio.sleep(sleep_time)
 
         await Tapper(tg_client=tg_client).run(proxy=proxy)
     except InvalidSession:
