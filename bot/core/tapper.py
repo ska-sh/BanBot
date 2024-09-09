@@ -241,7 +241,7 @@ class Tapper:
         try:
             max_click_count = 60
             today_click_count = 0
-            while max_click_count >= today_click_count:
+            while max_click_count > today_click_count:
                 resp = await http_client.get("https://interface.carv.io/banana/get_user_info", ssl=False)
                 resp_json = await resp.json()
                 data = resp_json.get('data')
@@ -249,12 +249,13 @@ class Tapper:
                 today_click_count = data['today_click_count']
                 if data is not None:
                     if max_click_count > today_click_count:
-                        logger.info(f"peels:{data['peel']}, max_click_count:{data['max_click_count']}, today_click_count:{data['today_click_count']}")
+                        logger.info(f"peels:{data['peel']}, max_click_count:{data['max_click_count']}, "
+                                    f"today_click_count:{data['today_click_count']}")
                         await self.do_click(http_client=http_client)
                         await asyncio.sleep(1)
                     else:
                         logger.success(f"Click Already completed")
-                return True
+            return True
         except Exception as e:
             self.error(f"do_click error: {e}")
 
