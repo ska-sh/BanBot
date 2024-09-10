@@ -263,7 +263,7 @@ class Tapper:
             resp_json = await resp.json()
             data = resp_json.get('data')
             if data is not None:
-                logger.success(f"Click Peel: {data['peel']}")
+                self.success(f"Click Peel: {data['peel']}")
                 # await self.get_user_info(http_client=http_client)
         except Exception as e:
             self.error(f"do_click error: {e}")
