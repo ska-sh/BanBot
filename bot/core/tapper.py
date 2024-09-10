@@ -11,8 +11,9 @@ from aiohttp_proxy import ProxyConnector
 from better_proxy import Proxy
 from pyrogram import Client
 from pyrogram.errors import Unauthorized, UserDeactivated, AuthKeyUnregistered, FloodWait
-from pyrogram.raw.functions.messages import RequestWebView
-from pyrogram.raw import types
+from pyrogram.raw.functions.messages import RequestAppWebView
+from pyrogram.raw.types import InputBotAppShortName
+
 from .agents import generate_random_user_agent
 from bot.config import settings
 
@@ -142,17 +143,12 @@ class Tapper:
             else:
                 self.start_param = settings.REF_ID
 
-            #https://t.me/PiggyPiggyofficialbot/game?startapp=share_6168926126
-            #https://t.me/BlumCryptoBot/app?startapp=ref_v7cnI85reb
             peer = await self.tg_client.resolve_peer('OfficialBananaBot')
-            # InputBotApp = types.InputBotAppShortName(bot_id=peer, short_name="game")
-
-            web_view = await self.tg_client.invoke(RequestWebView(
+            web_view = await self.tg_client.invoke(RequestAppWebView(
                 peer=peer,
-                bot=peer,
+                app=InputBotAppShortName(bot_id=peer, short_name="banana"),
                 platform='android',
-                from_bot_menu=False,
-                url='https://interface.carv.io'
+                write_allowed=True
             ))
 
             auth_url = web_view.url
