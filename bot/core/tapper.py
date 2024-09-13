@@ -180,10 +180,15 @@ class Tapper:
                 f"<light-yellow>{self.session_name}</light-yellow> | Unknown error during Authorization: {error}")
             await asyncio.sleep(delay=3)
 
-    async def login(self, http_client: aiohttp.ClientSession, initdata):
+    async def login(self, http_client: aiohttp.ClientSession, initdata: str):
         try:
             json_data = {"tgInfo": initdata}
             resp = await http_client.post("https://interface.carv.io/banana/login", json=json_data, ssl=False)
+            if resp.status == 429:
+                seconds = int(resp.headers.get('Retry-After')) * 60 + 60
+                self.warning(f"{resp.reason} sleep {seconds}")
+                await asyncio.sleep(seconds)
+                return await self.login(http_client=http_client, initdata=initdata)
             resp_json = await resp.json()
             return resp_json.get("data").get("token"), resp.headers['set-cookie']
 
@@ -248,7 +253,7 @@ class Tapper:
                         self.info(f"peels:{data['peel']}, max_click_count:{data['max_click_count']},"
                                   f" today_click_count:{data['today_click_count']}")
                         await self.do_click(http_client=http_client)
-                        await asyncio.sleep(random.randint(1, 5))
+                        await asyncio.sleep(random.randint(40, 60))
                     else:
                         logger.success(f"Click Already completed")
             return True
@@ -264,7 +269,6 @@ class Tapper:
             data = resp_json.get('data')
             if data is not None:
                 self.success(f"Click Peel: {data['peel']}")
-                # await self.get_user_info(http_client=http_client)
         except Exception as e:
             self.error(f"do_click error: {e}")
 

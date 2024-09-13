@@ -18,7 +18,7 @@ class Settings(BaseSettings):
     SLEEP_BETWEEN_START: list[int] = [10, 60]
 
     # 一次请求随机点击的次数
-    CLICK_COUNT: list[int] = [5, 25]
+    CLICK_COUNT: list[int] = [50, 250]
 
 settings = Settings()
 
