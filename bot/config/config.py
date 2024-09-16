@@ -7,7 +7,6 @@ class Settings(BaseSettings):
     API_ID: int
     API_HASH: str
 
-    POINTS: list[int] = [190, 230]
     BLACKLIST_TASK: list[str] = ['Compete for $100k Airdrop in PVP battles in Pixelton', 'Play MONEY DOGS']
     USE_REF: bool = False
     REF_ID: str = ''
@@ -18,7 +17,7 @@ class Settings(BaseSettings):
     SLEEP_BETWEEN_START: list[int] = [10, 60]
 
     # 一次请求随机点击的次数
-    CLICK_COUNT: list[int] = [50, 250]
+    CLICK_COUNT: list[int] = [100, 250]
 
 settings = Settings()
 

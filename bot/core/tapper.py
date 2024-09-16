@@ -11,8 +11,7 @@ from aiohttp_proxy import ProxyConnector
 from better_proxy import Proxy
 from pyrogram import Client
 from pyrogram.errors import Unauthorized, UserDeactivated, AuthKeyUnregistered, FloodWait
-from pyrogram.raw.functions.messages import RequestAppWebView
-from pyrogram.raw.types import InputBotAppShortName
+from pyrogram.raw.functions.messages import RequestWebView
 
 from .agents import generate_random_user_agent
 from bot.config import settings
@@ -144,11 +143,14 @@ class Tapper:
                 self.start_param = settings.REF_ID
 
             peer = await self.tg_client.resolve_peer('OfficialBananaBot')
-            web_view = await self.tg_client.invoke(RequestAppWebView(
+            # InputBotApp = types.InputBotAppShortName(bot_id=peer, short_name="game")
+
+            web_view = await self.tg_client.invoke(RequestWebView(
                 peer=peer,
-                app=InputBotAppShortName(bot_id=peer, short_name="banana"),
+                bot=peer,
                 platform='android',
-                write_allowed=True
+                from_bot_menu=False,
+                url='https://interface.carv.io'
             ))
 
             auth_url = web_view.url
@@ -349,6 +351,7 @@ class Tapper:
 
                     init_data = await self.get_tg_web_data(proxy=proxy)
 
+                    http_client.headers['Request-Time'] = str(int(time.time() * 1000))
                     access_token, set_cookie = await self.login(http_client=http_client, initdata=init_data)
 
                     http_client.headers["Authorization"] = f"Bearer {access_token}"
@@ -390,10 +393,10 @@ class Tapper:
 async def run_tapper(tg_client: Client, proxy: str | None):
     try:
         # 在创建Tapper实例之前添加随机休眠
-        if settings.SLEEP_BETWEEN_START:
-            sleep_time = random.randint(settings.SLEEP_BETWEEN_START[0], settings.SLEEP_BETWEEN_START[1])
-            logger.info(f"{tg_client.name} | Sleep for {sleep_time} seconds before starting session...")
-            await asyncio.sleep(sleep_time)
+        # if settings.SLEEP_BETWEEN_START:
+        #     sleep_time = random.randint(settings.SLEEP_BETWEEN_START[0], settings.SLEEP_BETWEEN_START[1])
+        #     logger.info(f"{tg_client.name} | Sleep for {sleep_time} seconds before starting session...")
+        #     await asyncio.sleep(sleep_time)
 
         await Tapper(tg_client=tg_client).run(proxy=proxy)
     except InvalidSession:
