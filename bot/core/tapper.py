@@ -380,6 +380,7 @@ class Tapper:
                 await self.claim_quest_lottery(http_client=http_client)
 
                 try:
+                    http_client.headers['Request-Time'] = str(int(time.time() * 1000))
                     resp = await http_client.get("https://interface.carv.io/banana/get_lottery_info", ssl=False)
                     resp_json = await resp.json()
                     if resp_json['data']['remain_lottery_count'] == 0:
