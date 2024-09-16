@@ -373,11 +373,19 @@ class Tapper:
 
                 await self.get_user_info(http_client=http_client)
 
+                await asyncio.sleep(60)
+
                 await self.get_lottery_info(http_client=http_client)
+
+                await asyncio.sleep(60)
 
                 await self.get_quest_list(http_client=http_client)
 
+                await asyncio.sleep(60)
+
                 await self.claim_quest_lottery(http_client=http_client)
+
+                await asyncio.sleep(60)
 
                 try:
                     http_client.headers['Request-Time'] = str(int(time.time() * 1000))
@@ -390,7 +398,7 @@ class Tapper:
                 except Exception as e:
                     self.error(f"sleep error: {e}")
 
-                await asyncio.sleep(1)
+                await asyncio.sleep(60)
 
             except InvalidSession as error:
                 raise error
