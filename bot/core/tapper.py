@@ -199,6 +199,7 @@ class Tapper:
 
     async def get_lottery_info(self, http_client: aiohttp.ClientSession):
         try:
+            http_client.headers['Request-Time'] = str(int(time.time() * 1000))
             resp = await http_client.get("https://interface.carv.io/banana/get_lottery_info", ssl=False)
             resp_json = await resp.json()
             remain_lottery_count = resp_json['data']['remain_lottery_count']
@@ -245,19 +246,23 @@ class Tapper:
             max_click_count = 60
             today_click_count = 0
             while max_click_count > today_click_count:
+                http_client.headers['Request-Time'] = str(int(time.time() * 1000))
                 resp = await http_client.get("https://interface.carv.io/banana/get_user_info", ssl=False)
-                resp_json = await resp.json()
-                data = resp_json.get('data')
-                max_click_count = data['max_click_count']
-                today_click_count = data['today_click_count']
-                if data is not None:
-                    if max_click_count > today_click_count:
-                        self.info(f"peels:{data['peel']}, max_click_count:{data['max_click_count']},"
-                                  f" today_click_count:{data['today_click_count']}")
-                        await self.do_click(http_client=http_client)
-                        await asyncio.sleep(random.randint(40, 60))
-                    else:
-                        logger.success(f"Click Already completed")
+                if resp.status == 200:
+                    resp_json = await resp.json()
+                    data = resp_json.get('data')
+                    max_click_count = data['max_click_count']
+                    today_click_count = data['today_click_count']
+                    if data is not None:
+                        if max_click_count > today_click_count:
+                            self.info(f"peels:{data['peel']}, max_click_count:{data['max_click_count']},"
+                                      f" today_click_count:{data['today_click_count']}")
+                            await self.do_click(http_client=http_client)
+                            await asyncio.sleep(random.randint(40, 60))
+                        else:
+                            logger.success(f"Click Already completed")
+                else:
+                    return True
             return True
         except Exception as e:
             self.error(f"do_click error: {e}")
@@ -276,6 +281,7 @@ class Tapper:
 
     async def get_quest_list(self, http_client: aiohttp.ClientSession):
         try:
+            http_client.headers['Request-Time'] = str(int(time.time() * 1000))
             resp = await http_client.get("https://interface.carv.io/banana/get_quest_list", ssl=False)
             resp_json = await resp.json()
             quest_list = resp_json['data']['quest_list']
@@ -299,6 +305,7 @@ class Tapper:
 
     async def claim_quest(self, http_client: aiohttp.ClientSession, quest_id: int):
         try:
+            http_client.headers['Request-Time'] = str(int(time.time() * 1000))
             json_data = {"quest_id": quest_id}
             resp = await http_client.post("https://interface.carv.io/banana/claim_quest", json=json_data, ssl=False)
             resp_json = await resp.json()
@@ -317,11 +324,13 @@ class Tapper:
 
     async def claim_quest_lottery(self, http_client: aiohttp.ClientSession):
         try:
+            http_client.headers['Request-Time'] = str(int(time.time() * 1000))
             resp = await http_client.get("https://interface.carv.io/banana/get_quest_list", ssl=False)
             resp_json = await resp.json()
             progress = resp_json['data']['progress']
             claim_size = int(progress.split('/')[0]) / int(progress.split('/')[1])
             if claim_size > 0:
+                http_client.headers['Request-Time'] = str(int(time.time() * 1000))
                 resp = await http_client.post("https://interface.carv.io/banana/claim_quest_lottery", json={}, ssl=False)
                 resp_json = await resp.json()
                 if resp_json['msg'] == u'Success':
