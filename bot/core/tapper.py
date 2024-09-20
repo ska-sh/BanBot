@@ -192,7 +192,7 @@ class Tapper:
                 await asyncio.sleep(seconds)
                 return await self.login(http_client=http_client, initdata=initdata)
             resp_json = await resp.json()
-            return resp_json.get("data").get("token"), resp.headers['set-cookie']
+            return resp_json.get("data").get("token"), resp.headers['set-cookie'], resp.cookies
 
         except Exception as error:
             logger.error(f"<light-yellow>{self.session_name}</light-yellow> | Login error {error}")
@@ -361,10 +361,12 @@ class Tapper:
                     init_data = await self.get_tg_web_data(proxy=proxy)
 
                     http_client.headers['Request-Time'] = str(int(time.time() * 1000))
-                    access_token, set_cookie = await self.login(http_client=http_client, initdata=init_data)
+                    access_token, set_cookie, cookie = await self.login(http_client=http_client, initdata=init_data)
 
                     http_client.headers["Authorization"] = f"Bearer {access_token}"
-                    http_client.headers['cookie'] = set_cookie
+                    # cookie.setdefault('banana-game:user:token', set_cookie.split('=')[1])
+                    # http_client.cookie_jar.
+                    # http_client.headers['cookie'] = cookie
 
                     if self.first_run is not True:
                         self.success("Logged in successfully")
