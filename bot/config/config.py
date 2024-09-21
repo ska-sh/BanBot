@@ -7,7 +7,8 @@ class Settings(BaseSettings):
     API_ID: int
     API_HASH: str
 
-    BLACKLIST_TASK: list[str] = ['Compete for $100k Airdrop in PVP battles in Pixelton', 'Play MONEY DOGS', 'Play Captain Tsubasa RIVALS on TON']
+    BLACKLIST_TASK: list[str] = ['Compete for $100k Airdrop in PVP battles in Pixelton', 'Play MONEY DOGS',
+                                 'Play Captain Tsubasa RIVALS on TON!']
     USE_REF: bool = False
     REF_ID: str = ''
 
