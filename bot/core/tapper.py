@@ -335,7 +335,7 @@ class Tapper:
                 resp_json = await resp.json()
                 if resp_json['msg'] == u'Success':
                     self.success(f"Claim: {resp_json['msg']}")
-                    await asyncio.sleep(1)
+                    await asyncio.sleep(60)
                     await self.claim_quest_lottery(http_client=http_client)
 
         except Exception as e:
@@ -385,7 +385,8 @@ class Tapper:
 
                 await asyncio.sleep(60)
 
-                await self.claim_quest_lottery(http_client=http_client)
+                if settings.DO_TASK:
+                    await self.claim_quest_lottery(http_client=http_client)
 
                 await asyncio.sleep(60)
 

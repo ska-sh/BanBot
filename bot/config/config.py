@@ -12,6 +12,8 @@ class Settings(BaseSettings):
     USE_REF: bool = False
     REF_ID: str = ''
 
+    DO_TASK: bool = False
+
     USE_PROXY_FROM_FILE: bool = False
 
     # 新增 SLEEP_BETWEEN_START 配置
