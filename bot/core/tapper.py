@@ -381,11 +381,9 @@ class Tapper:
 
                 await asyncio.sleep(60)
 
-                await self.get_quest_list(http_client=http_client)
-
-                await asyncio.sleep(60)
-
                 if settings.DO_TASK:
+                    await self.get_quest_list(http_client=http_client)
+                    await asyncio.sleep(60)
                     await self.claim_quest_lottery(http_client=http_client)
 
                 await asyncio.sleep(60)
